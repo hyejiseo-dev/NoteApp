@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mynote/pages/addnote.dart';
+import 'package:mynote/pages/viewnote.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -72,34 +73,48 @@ class _HomePageState extends State<HomePage> {
                     Color? bg = myColors[random.nextInt(4)];
                     Map data = snapshot.data!.docs[index].data() as Map;
                     DateTime mydateTime = data['created'].toDate();
-                    return Card(
-                      color: bg,
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${data['title']}',
-                                style: TextStyle(
-                                    fontSize: 24.0,
-                                    fontFamily: "lato",
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87),
+                    String formattedTime =
+                        DateFormat.yMMMd().add_jm().format(mydateTime);
+                    return InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(
+                              MaterialPageRoute(
+                                builder: (context) => ViewNote(
+                                    data,
+                                    formattedTime,
+                                    snapshot.data!.docs[index].reference),
                               ),
-                              Container(
-                                alignment: Alignment.centerRight,
-                                child: Text(
-                                  DateFormat.yMMMd()
-                                      .add_jm()
-                                      .format(mydateTime),
+                            )
+                            .then((value) => {setState(() {})});
+                      },
+                      child: Card(
+                        color: bg,
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${data['title']}',
                                   style: TextStyle(
-                                      fontSize: 16.0,
+                                      fontSize: 24.0,
                                       fontFamily: "lato",
+                                      fontWeight: FontWeight.bold,
                                       color: Colors.black87),
                                 ),
-                              )
-                            ]),
+                                Container(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    formattedTime,
+                                    style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontFamily: "lato",
+                                        color: Colors.black87),
+                                  ),
+                                )
+                              ]),
+                        ),
                       ),
                     );
                   });
