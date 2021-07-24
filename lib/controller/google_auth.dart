@@ -10,7 +10,7 @@ FirebaseAuth auth = FirebaseAuth.instance;
 
 CollectionReference users = FirebaseFirestore.instance.collection('users');
 
-Future<bool> signInWithGoogle(BuildContext context) async {
+void signInWithGoogle(BuildContext context) async {
   try {
     final GoogleSignInAccount? googleSignInAccount =
         await googleSignIn.signIn();
@@ -36,26 +36,23 @@ Future<bool> signInWithGoogle(BuildContext context) async {
       };
 
       //uid
-      users.doc(user!.uid).get().then((doc) => {
-            if (doc.exists)
-              {
-                // old user
-                doc.reference.update(userData),
+      users.doc(user!.uid).get().then((doc) {
+        if (doc.exists) {
+          // old user
+          doc.reference.update(userData);
 
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => HomePage(),
-                ))
-              }
-            else
-              {
-                // new user
-                users.doc(user.uid).set(userData),
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => HomePage(),
+          ));
+        } else {
+          // new user
+          users.doc(user.uid).set(userData);
 
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => HomePage(),
-                ))
-              }
-          });
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => HomePage(),
+          ));
+        }
+      });
     }
   } catch (PlatformException) {
     print(PlatformException);
